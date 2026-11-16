@@ -15,6 +15,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ro.sportybara.app.ui.PlaceholderFragment;
 import ro.sportybara.app.ui.home.HomeFragment;
+import ro.sportybara.app.ui.profile.ProfileFragment;
+import ro.sportybara.app.ui.tickets.TicketsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,13 +68,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static Fragment fragmentFor(int tabId) {
         if (tabId == R.id.tab_tickets) {
-            return PlaceholderFragment.newInstance(R.string.tab_tickets, R.string.empty_tickets);
+            return new TicketsFragment();
         } else if (tabId == R.id.tab_wheel) {
             return PlaceholderFragment.newInstance(R.string.tab_wheel, R.string.empty_wheel);
         } else if (tabId == R.id.tab_leaderboard) {
             return PlaceholderFragment.newInstance(R.string.tab_leaderboard, R.string.empty_leaderboard);
         } else if (tabId == R.id.tab_profile) {
-            return PlaceholderFragment.newInstance(R.string.tab_profile, R.string.empty_profile);
+            return new ProfileFragment();
         }
         return new HomeFragment();
     }
