@@ -108,3 +108,26 @@ def test_factor_summary_sortat_dupa_impact_absolut_si_rotunjit():
     assert summary[1]["impact"] == -0.012
     assert summary[2]["impact"] == 0.01
     assert set(summary[0]) == {"type", "team", "player", "impact"}
+
+
+def test_aceeasi_accidentare_din_mai_multe_articole_se_numara_o_data():
+    market = {"home": 0.5, "draw": 0.3, "away": 0.2}
+    once = apply_factors(market, [make_factor(play=0.0)])
+    repeated = apply_factors(market, [make_factor(play=0.0, player="Jucator"), make_factor(play=0.0, player=" jucator ")])
+    assert repeated == pytest.approx(once)
+
+
+def test_factorul_cel_mai_recent_castiga():
+    market = {"home": 0.5, "draw": 0.3, "away": 0.2}
+    old = make_factor(play=0.0)
+    new = make_factor(play=1.0)
+    new.date = datetime(2026, 11, 2)
+    assert apply_factors(market, [old, new]) == pytest.approx(market)
+    assert apply_factors(market, [new, old]) == pytest.approx(market)
+
+
+def test_jucatori_diferiti_se_aduna():
+    market = {"home": 0.5, "draw": 0.3, "away": 0.2}
+    one = apply_factors(market, [make_factor(play=0.0, player="A")])
+    two = apply_factors(market, [make_factor(play=0.0, player="A"), make_factor(play=0.0, player="B")])
+    assert two["home"] < one["home"]

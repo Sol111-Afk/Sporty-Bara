@@ -12,9 +12,22 @@ def factor_weight(factor) -> float:
     return 1.0
 
 
+def factor_key(factor) -> tuple:
+    return (factor.type, factor.team, (factor.player or "").strip().lower())
+
+
+def unique_factors(factors) -> list:
+    latest = {}
+    for factor in factors:
+        key = factor_key(factor)
+        if key not in latest or factor.date > latest[key].date:
+            latest[key] = factor
+    return list(latest.values())
+
+
 def factor_deltas(factors) -> dict:
     deltas = {k: 0.0 for k in OUTCOMES}
-    for factor in factors:
+    for factor in unique_factors(factors):
         weight = factor_weight(factor)
         for k in OUTCOMES:
             deltas[k] += factor.effect.get(k, 0.0) * weight
@@ -41,7 +54,7 @@ def sporty_bara_odds(market_odds: dict, factors, best_odds: dict) -> dict:
 
 def factor_summary(factors) -> list:
     summary = []
-    for factor in factors:
+    for factor in unique_factors(factors):
         impact = factor.effect.get(factor.team, 0.0) * factor_weight(factor)
         summary.append(
             {
