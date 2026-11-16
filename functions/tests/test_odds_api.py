@@ -19,7 +19,6 @@ def _by_id(parsed, match_id):
 def test_best_odds_corecte():
     parsed = parse_odds_events(_events(), "laliga")
     m = _by_id(parsed, "laliga_20261108_barcelona_sevilla")["match"]
-    # home: bet365 (1.50) > unibet (1.45); draw: unibet (4.6) > bet365 (4.4); away: unibet (6.5) > bet365 (6.0)
     assert m["bestOdds"] == {
         "home": {"odd": 1.5, "bookmaker": "bet365"},
         "draw": {"odd": 4.6, "bookmaker": "unibet_eu"},
@@ -30,7 +29,6 @@ def test_best_odds_corecte():
 def test_bookmaker_incomplet_e_ignorat():
     parsed = parse_odds_events(_events(), "laliga")
     m = _by_id(parsed, "laliga_20261108_barcelona_sevilla")
-    # betfair_ex_eu n-are egal, deci nu intră nici în cote, nici în best odds (ar fi avut 1.9 la home)
     assert set(m["odds"]) == {"unibet_eu", "bet365"}
     assert m["match"]["bestOdds"]["home"]["odd"] == 1.5
 
