@@ -73,4 +73,14 @@
         <item name="fontFamily">@font/nunito</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <style name="Widget.SportyBara.CoinPill" parent="">
+        <item name="android:background">@drawable/bg_pill</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.SportyBara.Number</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/sb_on_primary_container</item>
+    </style>
 </resources>
