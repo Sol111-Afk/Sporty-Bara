@@ -6,7 +6,8 @@ public class StoreException extends RuntimeException {
         EMPTY_SLIP,
         INVALID_STAKE,
         INSUFFICIENT_FUNDS,
-        NOT_FOUND
+        NOT_FOUND,
+        INVALID_NAME
     }
 
     private final Reason reason;

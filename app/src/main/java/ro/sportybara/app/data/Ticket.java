@@ -12,7 +12,7 @@ public class Ticket {
 
     public Ticket(String id, List<Selection> selections, int stake) {
         this.id = id;
-        this.selections = Collections.unmodifiableList(new ArrayList<>(selections));
+        this.selections = new ArrayList<>(selections);
         this.stake = stake;
     }
 
@@ -21,7 +21,11 @@ public class Ticket {
     }
 
     public List<Selection> getSelections() {
-        return selections;
+        return Collections.unmodifiableList(selections);
+    }
+
+    boolean removeSelection(String matchId) {
+        return selections.removeIf(selection -> selection.getMatch().getId().equals(matchId));
     }
 
     public int getStake() {
@@ -33,6 +37,14 @@ public class Ticket {
     }
 
     public double getTotalOdd() {
+        return totalOdd(selections);
+    }
+
+    public int getPotentialWin() {
+        return potentialWin(stake, getTotalOdd());
+    }
+
+    public static double totalOdd(List<Selection> selections) {
         double total = 1;
         for (Selection selection : selections) {
             total *= selection.getOdd();
@@ -40,7 +52,7 @@ public class Ticket {
         return Match.round(total);
     }
 
-    public int getPotentialWin() {
-        return (int) Math.floor(stake * getTotalOdd());
+    public static int potentialWin(int stake, double totalOdd) {
+        return (int) Math.floor(stake * totalOdd);
     }
 }

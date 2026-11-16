@@ -104,6 +104,56 @@ public class SportyStoreTest {
         assertEquals(2, calls[0]);
     }
 
+    @Test
+    public void removeSelectionKeepsTicketWhileSelectionsRemain() {
+        store.addToSlip(barcaSevilla, Outcome.HOME);
+        store.addToSlip(fcsbRapid, Outcome.DRAW);
+        Ticket ticket = store.placeTicket(100);
+        store.removeSelection(ticket.getId(), "m4");
+        assertEquals(1, store.findTicket(ticket.getId()).getSelections().size());
+        assertEquals(900, store.getBalance());
+    }
+
+    @Test
+    public void removingLastSelectionDeletesTicketAndRefunds() {
+        store.addToSlip(barcaSevilla, Outcome.HOME);
+        Ticket ticket = store.placeTicket(100);
+        store.removeSelection(ticket.getId(), "m1");
+        assertTrue(store.getTickets().isEmpty());
+        assertEquals(1000, store.getBalance());
+        expect(StoreException.Reason.NOT_FOUND, () -> store.removeSelection(ticket.getId(), "m1"));
+    }
+
+    @Test
+    public void selectionRemembersBestBookmaker() {
+        store.addToSlip(barcaSevilla, Outcome.HOME);
+        assertEquals("Betano", store.getSlip().get(0).getBookmaker());
+    }
+
+    @Test
+    public void displayNameIsValidated() {
+        store.setDisplayName("  Bara  ");
+        assertEquals("Bara", store.getDisplayName());
+        expect(StoreException.Reason.INVALID_NAME, () -> store.setDisplayName("   "));
+        expect(StoreException.Reason.INVALID_NAME, () -> store.setDisplayName("x".repeat(21)));
+    }
+
+    @Test
+    public void totalStakedAndReset() {
+        store.addToSlip(barcaSevilla, Outcome.HOME);
+        store.placeTicket(100);
+        store.addToSlip(fcsbRapid, Outcome.AWAY);
+        store.placeTicket(50);
+        assertEquals(150, store.getTotalStaked());
+        store.setDisplayName("Ana");
+        store.reset();
+        assertEquals(1000, store.getBalance());
+        assertTrue(store.getTickets().isEmpty());
+        assertEquals(SportyStore.DEFAULT_NAME, store.getDisplayName());
+        store.addToSlip(barcaSevilla, Outcome.HOME);
+        assertEquals("B1", store.placeTicket(10).getId());
+    }
+
     private static void expect(StoreException.Reason reason, Runnable action) {
         try {
             action.run();
