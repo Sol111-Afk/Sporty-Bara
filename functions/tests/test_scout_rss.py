@@ -52,14 +52,12 @@ def test_parse_google_news_fixture():
     articles = parse_feed(_read("google_news.xml"), "Google News", "Barcelona lesión")
     assert len(articles) == 4
     first = articles[0]
-    # sufixul „ - DAZN” a fost scos din titlu, sursa e cea reală
     assert first.title.startswith("Parte médico lesión Raphinha")
     assert not first.title.endswith("DAZN")
     assert first.source == "DAZN"
     assert first.url.startswith("https://news.google.com/rss/articles/")
     assert first.query == "Barcelona lesión"
     assert first.published == datetime(2026, 10, 29, 14, 59, 36, tzinfo=timezone.utc)
-    # rezumatul HTML e curățat
     assert "<a" not in first.summary
 
 

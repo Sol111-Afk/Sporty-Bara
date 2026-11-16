@@ -1,16 +1,13 @@
-"""Poisson tip Dixon–Coles simplificat: atac/apărare pe echipă + avantaj teren, cu ponderare în timp."""
 import math
 
 import numpy as np
 from scipy.optimize import minimize, minimize_scalar
 from scipy.special import gammaln
 
-# timp de înjumătățire ~ 1 sezon (365 zile)
 DEFAULT_XI = math.log(2) / 365
 
 
 def _tau(x, y, lh, la, rho):
-    """Corecția Dixon–Coles pentru scoruri mici (0-0, 0-1, 1-0, 1-1)."""
     if x == 0 and y == 0:
         return 1 - lh * la * rho
     if x == 0 and y == 1:
@@ -23,12 +20,6 @@ def _tau(x, y, lh, la, rho):
 
 
 class PoissonModel:
-    """log λ_gazdă = mu + h + atac[gazdă] − apărare[oaspete]; log λ_oaspete = mu + atac[oaspete] − apărare[gazdă].
-
-    Estimare prin maximum likelihood cu pondere exp(−xi · vechime_în_zile) și
-    penalizare L2 mică (echipele fără istoric rămân la media ligii = 0).
-    rho (Dixon–Coles) se estimează într-un pas separat, după ratele Poisson (simplificare).
-    """
 
     def __init__(self, xi: float = DEFAULT_XI, reg: float = 1.0, max_goals: int = 10,
                  use_rho: bool = True, max_age_days: int = 4 * 365):
@@ -42,7 +33,6 @@ class PoissonModel:
         self.fitted = False
 
     def fit(self, matches, ref_date):
-        """Antrenează pe meciuri; ref_date = „acum” (pentru vechime). Meciurile ≥ ref_date sunt ignorate."""
         rows = [m for m in matches if m["date"] < ref_date and (ref_date - m["date"]).days <= self.max_age_days]
         if not rows:
             self.fitted = False
@@ -96,7 +86,6 @@ class PoissonModel:
         return self
 
     def rates(self, home: str, away: str):
-        """(λ gazdă, λ oaspete); echipa necunoscută = media ligii."""
         i, j = self.teams.get(home), self.teams.get(away)
         ah = self.att[i] if i is not None else 0.0
         dh = self.dfn[i] if i is not None else 0.0
@@ -105,7 +94,6 @@ class PoissonModel:
         return (math.exp(self.mu + self.home_adv + ah - da), math.exp(self.mu + aa - dh))
 
     def score_matrix(self, home: str, away: str) -> np.ndarray:
-        """P(gazdă = i, oaspete = j) pentru 0..max_goals goluri, normalizată."""
         lh, la = self.rates(home, away)
         k = np.arange(self.max_goals + 1)
 
@@ -120,7 +108,6 @@ class PoissonModel:
         return mat / mat.sum()
 
     def predict(self, home: str, away: str) -> dict:
-        """Probabilități 1X2 din matricea de scor (rânduri = goluri gazdă)."""
         mat = self.score_matrix(home, away)
         return {"home": float(np.tril(mat, -1).sum()), "draw": float(np.trace(mat)),
                 "away": float(np.triu(mat, 1).sum())}

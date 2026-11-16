@@ -31,11 +31,11 @@ def test_season_accepta_si_datetime():
 
 def test_mapari_status_din_fixture():
     parsed = parse_fixtures(_fixtures(), "laliga")
-    assert _by_fixture_id(parsed, 1208021)["update"]["status"] == "scheduled"  # NS
-    assert _by_fixture_id(parsed, 1208022)["update"]["status"] == "live"       # 1H
-    assert _by_fixture_id(parsed, 1207990)["update"]["status"] == "finished"   # FT
-    assert _by_fixture_id(parsed, 1208030)["update"]["status"] == "scheduled"  # PST
-    assert _by_fixture_id(parsed, 1208040)["update"]["status"] == "cancelled"  # CANC
+    assert _by_fixture_id(parsed, 1208021)["update"]["status"] == "scheduled"
+    assert _by_fixture_id(parsed, 1208022)["update"]["status"] == "live"
+    assert _by_fixture_id(parsed, 1207990)["update"]["status"] == "finished"
+    assert _by_fixture_id(parsed, 1208030)["update"]["status"] == "scheduled"
+    assert _by_fixture_id(parsed, 1208040)["update"]["status"] == "cancelled"
 
 
 @pytest.mark.parametrize("short, expected", [
@@ -44,7 +44,7 @@ def test_mapari_status_din_fixture():
     ("P", "live"), ("LIVE", "live"), ("INT", "live"), ("SUSP", "live"),
     ("FT", "finished"), ("AET", "finished"), ("PEN", "finished"), ("AWD", "finished"), ("WO", "finished"),
     ("CANC", "cancelled"), ("ABD", "cancelled"),
-    ("XYZ", "scheduled"),  # necunoscut → scheduled
+    ("XYZ", "scheduled"),
 ])
 def test_toate_codurile_de_status(short, expected):
     payload = {"response": [{

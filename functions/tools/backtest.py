@@ -1,7 +1,3 @@
-"""Rulează backtest-ul walk-forward pe date reale (football-data.co.uk) și tipărește tabelele în Markdown.
-
-Exemplu:  cd functions && .venv/bin/python tools/backtest.py --league all
-"""
 import argparse
 import os
 import sys
@@ -9,13 +5,12 @@ from datetime import date
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sportybara.model import backtest, data  # noqa: E402
+from sportybara.model import backtest, data
 
 LABELS = {"poisson": "Poisson", "elo": "Elo", "model": "Poisson+Elo", "all": "Combinat (cu piață)",
           "market": "Piață (cote medii, fără marjă)"}
 
 LEAGUES = {
-    # nume: (încărcare, început test)
     "laliga": ("La Liga", lambda a: data.load_la_liga(["2122", "2223", "2324", "2425", "2526", "2627"], a.refresh),
                date(2022, 8, 1)),
     "romania": ("Superliga România", lambda a: data.load_romania(a.refresh), date(2022, 7, 1)),
@@ -23,7 +18,6 @@ LEAGUES = {
 
 
 def season_of(d):
-    """Anul de start al sezonului (iulie–iunie)."""
     return d.year if d.month >= 7 else d.year - 1
 
 

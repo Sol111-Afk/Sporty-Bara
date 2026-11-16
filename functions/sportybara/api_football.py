@@ -1,9 +1,7 @@
-"""Transformarea răspunsului API-Football v3 în rezultate și statusuri (fără Firebase)."""
 from datetime import datetime
 
 from sportybara.match_id import match_id
 
-# statusul API-Football → statusul din contract (docs/API.md)
 STATUS = {
     "NS": "scheduled", "TBD": "scheduled", "PST": "scheduled",
     "1H": "live", "HT": "live", "2H": "live", "ET": "live", "BT": "live",
@@ -14,16 +12,10 @@ STATUS = {
 
 
 def season_for(date) -> int:
-    """Anul de START al sezonului: din iulie încoace, anul curent; altfel anul precedent."""
     return date.year if date.month >= 7 else date.year - 1
 
 
 def parse_fixtures(payload: dict, league: str) -> list:
-    """Meciurile din API → [{matchId, match, update}].
-
-    update: status și score (None până începe meciul), plus externalIds.apiFootball.
-    match: câmpurile de identitate, folosite doar când meciul nu există încă în Firestore.
-    """
     result = []
     for item in payload.get("response", []):
         fx = item["fixture"]

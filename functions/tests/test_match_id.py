@@ -20,7 +20,6 @@ def test_format_id():
 
 
 def test_id_in_utc_nu_in_ora_locala():
-    # 00:30 în România (+02:00) pe 9 nov = 22:30 UTC pe 8 nov
     local = datetime(2026, 11, 9, 0, 30, tzinfo=timezone(timedelta(hours=2)))
     assert match_id("laliga", local, "Barcelona", "Sevilla") == "laliga_20261108_barcelona_sevilla"
 
@@ -31,8 +30,6 @@ def test_acelasi_meci_din_ambele_api_uri_are_acelasi_id():
     ids_odds = {m["matchId"] for m in odds}
     ids_fx = {m["matchId"] for m in fixtures}
 
-    # Barcelona–Sevilla: același nume în ambele API-uri
     assert "laliga_20261108_barcelona_sevilla" in ids_odds & ids_fx
-    # Atlético de Madrid (Odds) vs Atletico Madrid (API-Football): aliasuri
     assert "laliga_20261109_atletico-madrid_real-betis" in ids_odds
     assert "laliga_20261109_atletico-madrid_real-betis" in ids_fx

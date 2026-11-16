@@ -12,7 +12,6 @@ TEAMS = {"Tare": 2.2, "Mediu1": 1.3, "Mediu2": 1.2, "Slab": 0.6}
 
 
 def poisson_draw(rng, lam):
-    # Poisson prin inversiune (fără numpy, seed fix)
     import math
     limit, k, p = math.exp(-lam), 0, 1.0
     while True:
@@ -23,7 +22,6 @@ def poisson_draw(rng, lam):
 
 
 def synthetic(seed=1, rounds=40, start=date(2022, 8, 1), odds=True):
-    """Campionat sintetic dus-întors; goluri ~ Poisson(forță gazdă / oaspete)."""
     rng = random.Random(seed)
     names = list(TEAMS)
     out, d = [], start
@@ -64,7 +62,6 @@ def test_poisson_ignora_meciurile_din_viitor():
     ms = synthetic(rounds=4)
     cutoff = ms[20]["date"]
     a = PoissonModel().fit(ms, cutoff).predict("Tare", "Slab")
-    # schimbăm drastic rezultatele de după cutoff → predicția nu se schimbă
     alt = [dict(m, hg=9, ag=0) if m["date"] >= cutoff else m for m in ms]
     b = PoissonModel().fit(alt, cutoff).predict("Tare", "Slab")
     assert a == b
@@ -75,10 +72,8 @@ def test_elo_creste_dupa_victorie_si_suma_1():
     before_h, before_a = elo.rating("A"), elo.rating("B")
     elo.update("A", "B", 2, 0)
     assert elo.rating("A") > before_h and elo.rating("B") < before_a
-    # zero-sum
     assert elo.rating("A") + elo.rating("B") == pytest.approx(before_h + before_a)
     assert sum(elo.predict("A", "B").values()) == pytest.approx(1.0)
-    # după victorie, A e mai favorită față de un adversar nou decât înainte
     assert elo.predict("A", "C")["home"] > EloModel().predict("A", "C")["home"]
 
 
@@ -102,11 +97,11 @@ def test_combine_si_fair_odds():
 
 
 def test_verdict_cazuri_limita():
-    assert verdict(1.80, 2.00) == "low"     # 10% sub cota noastră
-    assert verdict(2.20, 2.00) == "high"    # 10% peste
+    assert verdict(1.80, 2.00) == "low"
+    assert verdict(2.20, 2.00) == "high"
     assert verdict(2.00, 2.00) == "fair"
-    assert verdict(1.90, 2.00) == "fair"    # exact -5% = încă fair
-    assert verdict(2.10, 2.00) == "fair"    # exact +5% = încă fair
+    assert verdict(1.90, 2.00) == "fair"
+    assert verdict(2.10, 2.00) == "fair"
     assert verdict(1.89, 2.00) == "low"
     assert verdict(2.11, 2.00) == "high"
     assert verdict(1.39, 2.0, tolerance=0.30) == "low"
@@ -118,14 +113,12 @@ def test_backtest_walk_forward_nu_foloseste_viitorul():
     start = ms[60]["date"]
     base = backtest.walk_forward(ms, start, min_train=30)
     assert base
-    # răstorn rezultatele tuturor meciurilor de după mijlocul testului
     pivot = base[len(base) // 2]["match"]["date"]
     alt = [dict(m, hg=7, ag=0) if m["date"] > pivot else m for m in ms]
     other = backtest.walk_forward(alt, start, min_train=30)
     assert len(base) == len(other)
     checked = 0
     for r1, r2 in zip(base, other):
-        # predicțiile pentru meciuri până la pivot nu depind de rezultate viitoare
         if r1["match"]["date"] <= pivot:
             assert r1["probs"]["poisson"] == r2["probs"]["poisson"]
             assert r1["probs"]["elo"] == r2["probs"]["elo"]
@@ -142,6 +135,5 @@ def test_backtest_metrici_si_value():
         assert 0 < m["log_loss"] < 3 and 0 < m["brier"] < 2 and 0 <= m["accuracy"] <= 1
     for v in res["value"]["model"]:
         assert v["wins"] <= v["bets"]
-    # praguri mai mari → mai puține pariuri
     bets = [v["bets"] for v in res["value"]["model"]]
     assert bets == sorted(bets, reverse=True)

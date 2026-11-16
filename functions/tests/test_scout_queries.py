@@ -10,7 +10,6 @@ def test_laliga_queries_in_spanish_and_english():
     assert ("Barcelona injury", "en") in queries
     assert ("Sevilla team news", "en") in queries
     assert ("árbitro Barcelona Sevilla", "es") in queries
-    # în limba ligii, nu în română
     assert not any(lang == "ro" for _, lang in queries)
 
 

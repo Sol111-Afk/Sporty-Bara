@@ -1,9 +1,3 @@
-"""Cloud Functions Sporty-Bara (Python).
-
-Fiecare funcție nouă se adaugă aici; logica pură (fără Firebase) stă în pachetul
-`sportybara/` ca să poată fi testată cu pytest fără emulator.
-Contractul (parametri, răspunsuri, erori) e în docs/API.md.
-"""
 import logging
 from datetime import datetime, timezone
 
@@ -29,19 +23,17 @@ ANTHROPIC_API_KEY = SecretParam("ANTHROPIC_API_KEY")
 
 ODDS_URL = "https://api.the-odds-api.com/v4/sports/{sport}/odds"
 FIXTURES_URL = "https://v3.football.api-sports.io/fixtures"
-BATCH_MAX = 500  # limita Firestore pentru operații într-un batch
+BATCH_MAX = 500
 
 log = logging.getLogger("sportybara")
 
 
 @https_fn.on_call()
 def ping(req: https_fn.CallableRequest) -> dict:
-    """Verificare că app-ul ajunge la funcții (folosit la legarea app ↔ Firebase)."""
     return {"ok": True, "uid": req.auth.uid if req.auth else None}
 
 
 def _commit(db, ops):
-    """Scrie [(referință, date)] cu merge, în batch-uri de cel mult BATCH_MAX."""
     for i in range(0, len(ops), BATCH_MAX):
         batch = db.batch()
         for ref, data in ops[i:i + BATCH_MAX]:
@@ -51,7 +43,6 @@ def _commit(db, ops):
 
 @scheduler_fn.on_schedule(schedule="0 */6 * * *", secrets=[ODDS_API_KEY])
 def fetch_odds(event: scheduler_fn.ScheduledEvent) -> None:
-    """Aduce cotele 1X2 pentru ligile cu The Odds API → matches + matches/odds."""
     db = firestore.client()
     session = requests.Session()
     ops = []
@@ -65,7 +56,6 @@ def fetch_odds(event: scheduler_fn.ScheduledEvent) -> None:
                 params={"apiKey": ODDS_API_KEY.value(), "regions": "eu", "markets": "h2h", "oddsFormat": "decimal"},
             )
         except Exception:
-            # o ligă picată nu le blochează pe celelalte
             log.exception("fetch_odds: eroare la liga %s", league)
             continue
         parsed = parse_odds_events(events, league)
@@ -74,7 +64,6 @@ def fetch_odds(event: scheduler_fn.ScheduledEvent) -> None:
 
         for m, ref in zip(parsed, refs):
             match = dict(m["match"])
-            # statusul îl pune fetch_results (live/finished); nu-l resetăm la „scheduled”
             if m["matchId"] in existing:
                 match.pop("status")
             match["updatedAt"] = firestore.SERVER_TIMESTAMP
@@ -85,10 +74,8 @@ def fetch_odds(event: scheduler_fn.ScheduledEvent) -> None:
     _commit(db, ops)
 
 
-# la 2 ore: 2 ligi × 12 = 24 cereri/zi din cele 100 gratuite (restul rămân pentru accidentări / Scout)
 @scheduler_fn.on_schedule(schedule="0 */2 * * *", secrets=[API_FOOTBALL_KEY])
 def fetch_results(event: scheduler_fn.ScheduledEvent) -> None:
-    """Aduce statusul și scorul din API-Football. Superliga (fără cote) își creează documentele."""
     db = firestore.client()
     session = requests.Session()
     season = season_for(datetime.now(timezone.utc))
@@ -114,14 +101,10 @@ def fetch_results(event: scheduler_fn.ScheduledEvent) -> None:
             if snap.exists:
                 ops.append((ref, {**m["update"], "updatedAt": firestore.SERVER_TIMESTAMP}))
             elif ids["oddsApi"] is None:
-                # fără cote: creăm meciul aici, cu câmpurile de identitate și bestOdds gol
                 ops.append((ref, {**m["match"], **m["update"], "bestOdds": {},
                                   "updatedAt": firestore.SERVER_TIMESTAMP}))
             elif m["update"]["status"] != "scheduled":
-                # meci început/terminat fără document: probabil nume diferite între API-uri
-                # → biletele lui nu s-ar deconta; completăm ALIASES din teams.py
                 unmatched.append(m["matchId"])
-            # pentru ligile cu cote, meciul apare doar prin fetch_odds
         if unmatched:
             log.warning("fetch_results: %d meciuri fără document în %s (aliasuri lipsă?): %s",
                         len(unmatched), league, ", ".join(unmatched[:20]))

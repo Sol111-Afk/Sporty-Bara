@@ -1,9 +1,3 @@
-"""Unealtă de dezvoltare: rulează colectarea Scout LIVE și afișează articolele.
-
-Exemplu:
-    python tools/scout_cli.py --home Barcelona --away Sevilla --league laliga --days 3
-"""
-
 import argparse
 import os
 import sys
@@ -11,10 +5,9 @@ from datetime import datetime, timedelta, timezone
 
 import requests
 
-# importă pachetul `sportybara` din functions/
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sportybara.scout.pipeline import collect  # noqa: E402
+from sportybara.scout.pipeline import collect
 
 
 def main() -> None:
