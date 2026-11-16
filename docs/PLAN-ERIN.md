@@ -7,6 +7,12 @@ Pentru bilete nu trebuie să aștepți cotele lui Sol: pui meciuri de test în e
 
 **Legături cu Sol:** biletele folosesc `bestOdds` din `matches` (#18); clasamentul din bălți primește criptarea Paillier (#22); cardul din Wallet are același `cardId` ca plata NFC (#24).
 
+## ⚠️ URGENT: Partea 1 (predare 16-11, diseară)
+- [ ] [#33 Ecran Bilete: plasare, modificare miză, ștergere](https://github.com/Sol111-Afk/Sporty-Bara/issues/33)
+- [ ] [#34 Ecran Profil: sold, rang, statistici](https://github.com/Sol111-Afk/Sporty-Bara/issues/34)
+
+Datele simulate sunt gata pe `main` (`ro.sportybara.app.data`). Identitate git: `erinlud` + `227129222+erinlud@users.noreply.github.com` (vezi `CLAUDE.md`).
+
 Ordinea de lucru (bifează în issue, se închide automat la merge-ul PR-ului cu `Closes #N`):
 
 
