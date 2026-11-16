@@ -18,7 +18,7 @@ public final class FakeData {
         matches.add(match("m1", LALIGA, "Barcelona", "Sevilla", "Sâm 22:00",
                 new double[]{1.45, 4.60, 6.50}, new double[]{1.48, 4.50, 6.20}, new double[]{1.42, 4.75, 6.80}));
         matches.add(match("m2", LALIGA, "Real Madrid", "Valencia", "Dum 17:15",
-                new double[]{1.38, 5.00, 7.50}, new double[]{1.40, 4.80, 7.25}, new double[]{1.36, 5.20, 8.00}));
+                new double[]{1.30, 4.40, 6.50}, new double[]{1.32, 4.30, 6.25}, new double[]{1.28, 4.50, 6.75}));
         matches.add(match("m3", LALIGA, "Atlético Madrid", "Real Betis", "Dum 22:00",
                 new double[]{1.80, 3.60, 4.50}, new double[]{1.85, 3.50, 4.40}, new double[]{1.75, 3.70, 4.60}));
         matches.add(match("m4", SUPERLIGA, "FCSB", "Rapid", "Sâm 20:30",
@@ -26,7 +26,7 @@ public final class FakeData {
         matches.add(match("m5", SUPERLIGA, "CFR Cluj", "Universitatea Craiova", "Dum 20:00",
                 new double[]{2.40, 3.20, 2.90}, new double[]{2.35, 3.25, 3.00}, new double[]{2.50, 3.10, 2.85}));
         matches.add(match("m6", SUPERLIGA, "Dinamo", "U Cluj", "Lun 19:00",
-                new double[]{2.60, 3.10, 2.75}, new double[]{2.70, 3.05, 2.70}, new double[]{2.55, 3.20, 2.80}));
+                new double[]{2.60, 3.10, 2.75}, new double[]{2.70, 3.05, 2.70}, new double[]{2.55, 3.20, 3.30}));
         return matches;
     }
 

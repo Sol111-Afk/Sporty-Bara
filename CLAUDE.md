@@ -2,5 +2,8 @@
 
 - Fără comentarii în cod (Java, XML, Python, JS, Gradle). Codul trebuie să fie clar din nume.
 - Fără nicio mențiune Claude / AI în commit-uri, PR-uri, issues sau fișiere: fără `Co-Authored-By`, fără „Generated with”.
-- Identitate git: `Sol111-Afk` + adresa noreply. Fără nume reale sau emailuri personale.
+- Identitate git: fiecare cu contul lui GitHub + adresa noreply, setate local în repo:
+  - Sol: `Sol111-Afk` / `236909594+Sol111-Afk@users.noreply.github.com`
+  - Erin: `erinlud` / `227129222+erinlud@users.noreply.github.com`
+- Fără nume reale sau emailuri personale nicăieri.
 - Commit-uri cu mesaje scurte în română.
