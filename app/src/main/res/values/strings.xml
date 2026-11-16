@@ -14,4 +14,30 @@
     <string name="empty_wheel">Roata se învârte în curând.</string>
     <string name="empty_leaderboard">Clasamentul și bălțile vin în curând 🫧</string>
     <string name="empty_profile">Profilul tău de capibara vine în curând.</string>
+    <string name="home_title">Meciurile zilei</string>
+    <string name="home_subtitle">Cea mai bună cotă din 3 case, pentru fiecare rezultat</string>
+    <string name="filter_all">Toate</string>
+    <string name="filter_laliga">La Liga</string>
+    <string name="filter_superliga">Superliga</string>
+    <string name="match_meta">%1$s · %2$s</string>
+    <string name="odd_with_label">%1$s  %2$s</string>
+    <string name="on_slip">Pe bilet: %1$s</string>
+    <plurals name="slip_summary">
+        <item quantity="one">%d selecție pe bilet · vezi tab-ul Bilete</item>
+        <item quantity="few">%d selecții pe bilet · vezi tab-ul Bilete</item>
+        <item quantity="other">%d de selecții pe bilet · vezi tab-ul Bilete</item>
+    </plurals>
+    <string name="back">Înapoi</string>
+    <string name="odds_comparison">Cotele caselor</string>
+    <string name="bookmaker">Casa</string>
+    <string name="sporty_bara_odd">Sporty-Bara</string>
+    <string name="best_odd_description">%1$s, cea mai bună cotă</string>
+    <string name="verdict_title">Ce zice Bara 🍊</string>
+    <string name="verdict_fair">%1$s: cota %2$s e corectă (a noastră: %3$s)</string>
+    <string name="verdict_low">%1$s: casa o dă prea mică, %2$s (a noastră: %3$s)</string>
+    <string name="verdict_high">%1$s: cotă bună, %2$s peste a noastră (%3$s)</string>
+    <string name="pick_title">Pune pe bilet</string>
+    <string name="pick_button">%1$s · %2$s</string>
+    <string name="added_to_slip">Ai pus %1$s pe bilet: %2$s</string>
+    <string name="view_slip">Vezi biletul</string>
 </resources>
