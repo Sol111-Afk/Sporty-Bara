@@ -12,6 +12,9 @@ from firebase_admin import firestore, initialize_app
 from firebase_functions import https_fn, options, scheduler_fn
 from firebase_functions.params import SecretParam
 
+from sportybara.ai.client import build_client
+from sportybara.ai.consultant import ExplainError, build_context, explain
+from sportybara.ai.limits import LimitExceeded, check_and_count, usage_key
 from sportybara.api_football import parse_fixtures, season_for
 from sportybara.config import LEAGUES
 from sportybara.http import get_json
@@ -22,6 +25,7 @@ initialize_app()
 
 ODDS_API_KEY = SecretParam("ODDS_API_KEY")
 API_FOOTBALL_KEY = SecretParam("API_FOOTBALL_KEY")
+ANTHROPIC_API_KEY = SecretParam("ANTHROPIC_API_KEY")
 
 ODDS_URL = "https://api.the-odds-api.com/v4/sports/{sport}/odds"
 FIXTURES_URL = "https://v3.football.api-sports.io/fixtures"
@@ -122,3 +126,43 @@ def fetch_results(event: scheduler_fn.ScheduledEvent) -> None:
             log.warning("fetch_results: %d meciuri fără document în %s (aliasuri lipsă?): %s",
                         len(unmatched), league, ", ".join(unmatched[:20]))
     _commit(db, ops)
+
+
+@firestore.transactional
+def _count_question(transaction, usage_ref, uid, today):
+    snapshot = usage_ref.get(transaction=transaction)
+    store = dict(snapshot.to_dict() or {}) if snapshot.exists else {}
+    check_and_count(store, uid, today)
+    transaction.set(usage_ref, {usage_key(uid, today): store[usage_key(uid, today)],
+                                "uid": uid, "day": today})
+
+
+@https_fn.on_call(secrets=[ANTHROPIC_API_KEY], timeout_sec=60)
+def ai_explain(req: https_fn.CallableRequest) -> dict:
+    if req.auth is None:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.UNAUTHENTICATED, "autentificare necesară")
+    data = req.data or {}
+    match_id, question = data.get("matchId"), data.get("question")
+    if not isinstance(match_id, str) or not match_id or not isinstance(question, str) or not question.strip():
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.INVALID_ARGUMENT, "matchId și question sunt obligatorii")
+
+    db = firestore.client()
+    match_ref = db.collection("matches").document(match_id)
+    match_snapshot = match_ref.get()
+    if not match_snapshot.exists:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.NOT_FOUND, "meci inexistent")
+    match = match_snapshot.to_dict()
+    factors = [snap.to_dict() for snap in match_ref.collection("factors").stream()]
+    context = build_context(match, match.get("fairOdds"), match.get("bestOdds"), factors)
+
+    today = datetime.now(timezone.utc).date().isoformat()
+    usage_ref = db.collection("ai_usage").document(usage_key(req.auth.uid, today))
+    try:
+        _count_question(db.transaction(), usage_ref, req.auth.uid, today)
+    except LimitExceeded:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.RESOURCE_EXHAUSTED, "limita zilnică de întrebări a fost atinsă")
+
+    try:
+        return explain(build_client(), context, question.strip())
+    except ExplainError:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.UNAVAILABLE, "consultantul nu e disponibil acum")
