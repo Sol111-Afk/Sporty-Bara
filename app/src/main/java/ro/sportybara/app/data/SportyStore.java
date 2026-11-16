@@ -10,6 +10,8 @@ public final class SportyStore {
     public static final int START_BALANCE = 1000;
     public static final int MIN_STAKE = 10;
     public static final int MAX_STAKE = 500;
+    public static final int MAX_NAME_LENGTH = 20;
+    public static final String DEFAULT_NAME = "Capibara";
 
     public interface Listener {
         void onStoreChanged();
@@ -18,6 +20,8 @@ public final class SportyStore {
     private static SportyStore instance;
 
     private final List<Match> matches;
+    private final int startBalance;
+    private String displayName = DEFAULT_NAME;
     private final List<Selection> slip = new ArrayList<>();
     private final List<Ticket> tickets = new ArrayList<>();
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
@@ -27,6 +31,7 @@ public final class SportyStore {
     public SportyStore(List<Match> matches, int balance) {
         this.matches = Collections.unmodifiableList(new ArrayList<>(matches));
         this.balance = balance;
+        this.startBalance = balance;
     }
 
     public static synchronized SportyStore get() {
@@ -89,7 +94,7 @@ public final class SportyStore {
         if (existing != null) {
             slip.remove(existing);
         }
-        slip.add(new Selection(match, outcome, match.bestOdd(outcome)));
+        slip.add(new Selection(match, outcome, match.bestOdd(outcome), match.bestBookmaker(outcome)));
         notifyListeners();
     }
 
@@ -101,17 +106,17 @@ public final class SportyStore {
         }
     }
 
+    public void removeFromSlip(String matchId) {
+        removeFromSlip(findMatch(matchId));
+    }
+
     public void clearSlip() {
         slip.clear();
         notifyListeners();
     }
 
     public double slipTotalOdd() {
-        double total = 1;
-        for (Selection selection : slip) {
-            total *= selection.getOdd();
-        }
-        return Match.round(total);
+        return Ticket.totalOdd(slip);
     }
 
     public Ticket placeTicket(int stake) {
@@ -146,6 +151,57 @@ public final class SportyStore {
         Ticket ticket = findTicket(ticketId);
         tickets.remove(ticket);
         balance += ticket.getStake();
+        notifyListeners();
+    }
+
+    public void removeSelection(String ticketId, String matchId) {
+        Ticket ticket = findTicket(ticketId);
+        if (!ticket.removeSelection(matchId)) {
+            throw new StoreException(StoreException.Reason.NOT_FOUND);
+        }
+        if (ticket.getSelections().isEmpty()) {
+            tickets.remove(ticket);
+            balance += ticket.getStake();
+        }
+        notifyListeners();
+    }
+
+    public boolean hasTicket(String ticketId) {
+        for (Ticket ticket : tickets) {
+            if (ticket.getId().equals(ticketId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int getTotalStaked() {
+        int total = 0;
+        for (Ticket ticket : tickets) {
+            total += ticket.getStake();
+        }
+        return total;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String name) {
+        String trimmed = name == null ? "" : name.trim();
+        if (trimmed.isEmpty() || trimmed.length() > MAX_NAME_LENGTH) {
+            throw new StoreException(StoreException.Reason.INVALID_NAME);
+        }
+        displayName = trimmed;
+        notifyListeners();
+    }
+
+    public void reset() {
+        slip.clear();
+        tickets.clear();
+        balance = startBalance;
+        displayName = DEFAULT_NAME;
+        nextTicketNumber = 1;
         notifyListeners();
     }
 
