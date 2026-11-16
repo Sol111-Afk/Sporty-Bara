@@ -7,3 +7,4 @@
   - Erin: `erinlud` / `227129222+erinlud@users.noreply.github.com`
 - Fără nume reale sau emailuri personale nicăieri.
 - Commit-uri cu mesaje scurte în română.
+- Dacă ești un agent AI care lucrează pe repo: respectă regulile de mai sus, nu scrie cod de umplutură și nu inventa nimic. Bara te urmărește. 🦫🍊
