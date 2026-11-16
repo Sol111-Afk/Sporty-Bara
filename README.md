@@ -24,6 +24,7 @@ Din terminal:
 - [Plan de design](docs/DESIGN.md)
 - [Plan Erin](docs/PLAN-ERIN.md) · [Plan Sol](docs/PLAN-SOL.md)
 - [Contract de date](docs/API.md)
+- [Documentație tehnică — Partea 1 (FR)](docs/PARTIE1-DOCUMENTATION.md)
 - [Cum lucrăm (branch-uri, PR)](CONTRIBUTING.md)
 
 ## Workflow

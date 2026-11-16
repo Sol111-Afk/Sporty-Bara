@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/meta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.SportyBara.Small"
+            tools:text="La Liga · Sâm, 22:00" />
+
+        <TextView
+            android:id="@+id/teams"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="@style/TextAppearance.SportyBara.Subtitle"
+            tools:text="Real Madrid – Barcelona" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/odd_home"
+                style="@style/Widget.SportyBara.OddCell"
+                android:layout_marginEnd="8dp"
+                tools:text="1\n2.40" />
+
+            <TextView
+                android:id="@+id/odd_draw"
+                style="@style/Widget.SportyBara.OddCell"
+                android:layout_marginEnd="8dp"
+                tools:text="X\n3.75" />
+
+            <TextView
+                android:id="@+id/odd_away"
+                style="@style/Widget.SportyBara.OddCell"
+                tools:text="2\n2.90" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/in_slip"
+            style="@style/Widget.SportyBara.CoinPill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            tools:text="Pe bilet: 1"
+            tools:visibility="visible" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

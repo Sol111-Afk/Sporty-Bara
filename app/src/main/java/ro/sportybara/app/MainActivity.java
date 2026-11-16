@@ -3,17 +3,29 @@ package ro.sportybara.app;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import ro.sportybara.app.ui.HomeFragment;
+import ro.sportybara.app.ui.MatchFragment;
 import ro.sportybara.app.ui.PlaceholderFragment;
+import ro.sportybara.app.ui.ProfileFragment;
+import ro.sportybara.app.ui.TicketsFragment;
 
+/**
+ * O singură activitate; ecranele sunt fragmente.
+ * Navigare: bara de jos (5 tab-uri) + ecranul Meci deschis peste Acasă (cu back stack, butonul Înapoi revine).
+ */
 public class MainActivity extends AppCompatActivity {
+
+    private BottomNavigationView nav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,33 +41,60 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        BottomNavigationView nav = findViewById(R.id.bottom_nav);
+        nav = findViewById(R.id.bottom_nav);
         nav.setOnItemSelectedListener(item -> {
-            show(fragmentFor(item.getItemId()));
+            showTab(item.getItemId());
             return true;
         });
+        // Apăsarea pe tab-ul deja activ închide ecranul Meci și revine la listă.
+        nav.setOnItemReselectedListener(item -> popToRoot());
         if (savedInstanceState == null) {
-            nav.setSelectedItemId(R.id.tab_home);
+            // Acasă e deja tab-ul selectat implicit, deci setSelectedItemId ar ajunge la „reselect”.
+            showTab(R.id.tab_home);
         }
     }
 
-    private void show(Fragment f) {
+    /** Deschide ecranul Meci peste tab-ul curent. */
+    public void openMatch(String matchId) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, f)
+                .setReorderingAllowed(true)
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
+                        android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.fragment_container, MatchFragment.newInstance(matchId))
+                .addToBackStack("match")
                 .commit();
     }
 
-    /** Fiecare tab are deocamdată un ecran gol; se înlocuiesc pe rând cu ecranele reale. */
+    /** Schimbă tab-ul (ex. „Vezi biletul” din ecranul Meci). */
+    public void openTab(@IdRes int tabId) {
+        nav.setSelectedItemId(tabId);
+    }
+
+    private void showTab(@IdRes int tabId) {
+        popToRoot();
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.fragment_container, fragmentFor(tabId))
+                .commit();
+    }
+
+    private void popToRoot() {
+        FragmentManager fm = getSupportFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+    }
+
     private static Fragment fragmentFor(int tabId) {
         if (tabId == R.id.tab_tickets) {
-            return PlaceholderFragment.newInstance(R.string.tab_tickets, R.string.empty_tickets);
+            return new TicketsFragment();
         } else if (tabId == R.id.tab_wheel) {
             return PlaceholderFragment.newInstance(R.string.tab_wheel, R.string.empty_wheel);
         } else if (tabId == R.id.tab_leaderboard) {
             return PlaceholderFragment.newInstance(R.string.tab_leaderboard, R.string.empty_leaderboard);
         } else if (tabId == R.id.tab_profile) {
-            return PlaceholderFragment.newInstance(R.string.tab_profile, R.string.empty_profile);
+            return new ProfileFragment();
         }
-        return PlaceholderFragment.newInstance(R.string.tab_home, R.string.empty_home);
+        return new HomeFragment();
     }
 }

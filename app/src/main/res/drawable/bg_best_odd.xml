@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cea mai bună cotă: fundal portocaliu yuzu, text sb_on_accent (DESIGN.md §3). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/sb_accent" />
+    <corners android:radius="10dp" />
+</shape>
