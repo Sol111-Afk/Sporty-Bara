@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 
 import ro.sportybara.app.R;
 
-/** Ecran gol pentru un tab, până se face ecranul real. */
 public class PlaceholderFragment extends Fragment {
 
     private static final String ARG_TITLE = "title";
