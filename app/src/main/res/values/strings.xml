@@ -1,19 +1,15 @@
 <resources>
     <string name="app_name">Sporty-Bara</string>
 
-    <!-- Tab-uri -->
     <string name="tab_home">Acasă</string>
     <string name="tab_tickets">Bilete</string>
     <string name="tab_wheel">Roata</string>
     <string name="tab_leaderboard">Clasament</string>
     <string name="tab_profile">Profil</string>
 
-    <!-- Ecrane goale (până vin ecranele reale) -->
     <string name="empty_home">Bara caută meciurile zilei… 🍊</string>
-    <string name="empty_tickets">Niciun bilet încă. Bara doarme pe iarbă 💤</string>
     <string name="empty_wheel">Roata se învârte în curând.</string>
     <string name="empty_leaderboard">Clasamentul și bălțile vin în curând 🫧</string>
-    <string name="empty_profile">Profilul tău de capibara vine în curând.</string>
     <string name="home_title">Meciurile zilei</string>
     <string name="home_subtitle">Cea mai bună cotă din 3 case, pentru fiecare rezultat</string>
     <string name="filter_all">Toate</string>
@@ -25,7 +21,7 @@
     <plurals name="slip_summary">
         <item quantity="one">%d selecție pe bilet · vezi tab-ul Bilete</item>
         <item quantity="few">%d selecții pe bilet · vezi tab-ul Bilete</item>
-        <item quantity="other">%d de selecții pe bilet · vezi tab-ul Bilete</item>
+        <item quantity="other">%d selecții pe bilet · vezi tab-ul Bilete</item>
     </plurals>
     <string name="back">Înapoi</string>
     <string name="odds_comparison">Cotele caselor</string>
@@ -40,4 +36,53 @@
     <string name="pick_button">%1$s · %2$s</string>
     <string name="added_to_slip">Ai pus %1$s pe bilet: %2$s</string>
     <string name="view_slip">Vezi biletul</string>
+    <string name="coins_format">%1$d 🍊</string>
+    <string name="no_real_money">Fără bani reali. Monedele nu au valoare și nu se pot retrage.</string>
+    <string name="cancel">Anulează</string>
+    <string name="save">Salvează</string>
+    <string name="delete">Șterge</string>
+    <string name="stake_default" translatable="false">50</string>
+    <string name="slip_title">Bilet curent</string>
+    <string name="slip_empty">Niciun meci pe bilet. Bara doarme pe iarbă 💤\nAlege un meci din Acasă.</string>
+    <string name="stake_hint">Miză (Bara Coins)</string>
+    <string name="slip_total_odd">Cotă totală: %1$s</string>
+    <string name="slip_potential_win">Câștig posibil: %1$d 🍊</string>
+    <string name="slip_place">Plasează biletul</string>
+    <string name="slip_clear">Golește</string>
+    <string name="slip_placed">Bilet plasat! Mult noroc 🍀</string>
+    <string name="tickets_active">Bilete active</string>
+    <string name="tickets_none">Încă nu ai bilete plasate.</string>
+    <plurals name="ticket_header">
+        <item quantity="one">Bilet %1$s · %2$d selecție</item>
+        <item quantity="few">Bilet %1$s · %2$d selecții</item>
+        <item quantity="other">Bilet %1$s · %2$d selecții</item>
+    </plurals>
+    <string name="ticket_stake_line">Miză %1$d 🍊 · cotă %2$s · câștig posibil %3$d 🍊</string>
+    <string name="ticket_edit">Modifică</string>
+    <string name="ticket_edit_title">Modifică biletul %1$s</string>
+    <string name="ticket_edit_selections">Selecții (debifează ca să scoți)</string>
+    <string name="ticket_delete_title">Ștergi biletul %1$s?</string>
+    <string name="ticket_delete_message">Miza de %1$d 🍊 se întoarce în sold.</string>
+    <string name="ticket_deleted">Bilet șters, miza a fost returnată</string>
+    <string name="ticket_updated">Bilet actualizat</string>
+    <string name="selection_line">%1$s · %2$s @ %3$s</string>
+    <string name="selection_bookmaker">la %1$s</string>
+    <string name="remove_selection">Scoate %1$s</string>
+    <string name="error_empty_slip">Pune întâi un meci pe bilet.</string>
+    <string name="error_invalid_stake">Miza trebuie să fie între %1$d și %2$d.</string>
+    <string name="error_insufficient_funds">Sold insuficient: ai %1$d 🍊.</string>
+    <string name="error_invalid_name">Numele trebuie să aibă între 1 și %1$d caractere.</string>
+    <string name="error_generic">Operația nu a putut fi făcută.</string>
+    <string name="profile_balance">Sold</string>
+    <string name="profile_rank">Rang: Pui de capibara</string>
+    <string name="profile_stats">Statistici</string>
+    <string name="profile_tickets">Bilete active</string>
+    <string name="profile_staked">Total mizat</string>
+    <string name="profile_slip">Pe biletul curent</string>
+    <string name="profile_edit_name">Schimbă numele</string>
+    <string name="profile_name_hint">Nume afișat</string>
+    <string name="profile_reset">Resetează datele demo</string>
+    <string name="profile_reset_confirm">Toate biletele se șterg și soldul revine la %1$d 🍊.</string>
+    <string name="profile_reset_done">Date demo resetate</string>
+    <string name="profile_demo_note">Prototip (Partea 1): datele sunt simulate și se păstrează doar cât e deschisă aplicația.</string>
 </resources>
