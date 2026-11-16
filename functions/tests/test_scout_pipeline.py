@@ -29,7 +29,6 @@ class FakeResponse:
 
 
 class FixtureSession:
-    """Google News primește fixture-ul Google, BBC fixture-ul BBC, restul un feed gol."""
 
     def __init__(self):
         self.calls = []
@@ -98,12 +97,9 @@ def test_collect_makes_one_request_per_query_and_feed():
 def test_collect_returns_relevant_deduplicated_articles():
     articles = collect(FixtureSession(), MATCH, SINCE, delay=0)
     urls = [a.url for a in articles]
-    # fiecare căutare întoarce aceleași 4 articole: trebuie să rămână o singură dată
     assert len(urls) == len(set(urls))
-    # știrile Google despre Barcelona sunt relevante, cele de presă doar dacă citează o echipă
     assert sum(1 for a in articles if a.source == "DAZN") == 1
     assert not any("Tenerife" in a.title for a in articles)
-    # „Saliba's back for Arsenal” e din fluxul BBC și menționează Arsenal
     bbc = [a for a in articles if a.source == "BBC Sport"]
     assert len(bbc) == 1
     assert "Saliba" in bbc[0].title
@@ -117,11 +113,9 @@ def test_run_turns_factors_into_pending_docs():
     extractor = FakeExtractor([_factor()])
     docs = run(FixtureSession(), MATCH, extractor, SINCE, delay=0)
     articles = collect(FixtureSession(), MATCH, SINCE, delay=0)
-    # un apel de extragere per articol, un document per factor
     assert len(extractor.calls) == len(articles)
     assert len(docs) == len(articles)
     assert all(d["matchId"] == "m1" and d["status"] == "pending" for d in docs)
-    # extractorul primește echipele din meci
     assert extractor.calls[0][1:] == ("Barcelona", "Arsenal")
 
 

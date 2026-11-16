@@ -1,4 +1,3 @@
-"""Transformarea răspunsului The Odds API v4 în meciuri și cote (fără Firebase)."""
 from datetime import datetime
 
 from sportybara.match_id import match_id
@@ -6,16 +5,13 @@ from sportybara.odds import OUTCOMES, best_odds
 
 
 def _parse_time(value: str) -> datetime:
-    # „2026-11-08T20:00:00Z” → datetime aware în UTC
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
 def _bookmaker_odds(bookmaker: dict, home: str, away: str):
-    """Cotele 1X2 ale unui bookmaker, sau None dacă lipsește vreun rezultat."""
     h2h = next((m for m in bookmaker.get("markets", []) if m.get("key") == "h2h"), None)
     if h2h is None:
         return None
-    # în The Odds API, egalul are numele „Draw”, celelalte rezultate au numele echipelor
     names = {home: "home", away: "away", "Draw": "draw"}
     prices = {}
     for outcome in h2h.get("outcomes", []):
@@ -28,11 +24,6 @@ def _bookmaker_odds(bookmaker: dict, home: str, away: str):
 
 
 def parse_odds_events(events: list, league: str) -> list:
-    """Evenimentele din API → [{matchId, match, odds}], gata de scris în Firestore.
-
-    odds: {bookmaker: {home, draw, away}}. Bookmakerii incompleți se ignoră,
-    evenimentele fără niciun bookmaker valid se sar.
-    """
     result = []
     for ev in events:
         home, away = ev["home_team"], ev["away_team"]
