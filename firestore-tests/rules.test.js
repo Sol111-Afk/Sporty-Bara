@@ -20,7 +20,6 @@ import {
 
 let testEnv;
 
-// Utilizatori: ana (proprietar), bob (urmărește pe ana), cris (străin), admin
 const ana = () => testEnv.authenticatedContext("ana").firestore();
 const bob = () => testEnv.authenticatedContext("bob").firestore();
 const cris = () => testEnv.authenticatedContext("cris").firestore();

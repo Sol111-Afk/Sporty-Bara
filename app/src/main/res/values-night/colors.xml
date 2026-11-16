@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- „Onsen noaptea” — docs/DESIGN.md §3 (dark). -->
 <resources>
     <color name="sb_background">#2B1D14</color>
     <color name="sb_surface">#3A2A1F</color>

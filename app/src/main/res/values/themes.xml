@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Tema Sporty-Bara. Culorile se schimbă singure în dark mode (values-night/colors.xml). -->
 <resources>
     <style name="Base.Theme.SportyBara" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/sb_primary</item>
@@ -24,8 +23,6 @@
         <item name="colorSurfaceContainerHigh">@color/sb_surface</item>
         <item name="colorOutline">@color/sb_outline</item>
 
-
-        <!-- Font -->
         <item name="fontFamily">@font/nunito</item>
         <item name="android:fontFamily">@font/nunito</item>
         <item name="textAppearanceHeadlineSmall">@style/TextAppearance.SportyBara.Title</item>
@@ -36,7 +33,6 @@
         <item name="textAppearanceBodySmall">@style/TextAppearance.SportyBara.Small</item>
         <item name="textAppearanceLabelLarge">@style/TextAppearance.SportyBara.Button</item>
 
-        <!-- Componente -->
         <item name="materialButtonStyle">@style/Widget.SportyBara.Button</item>
         <item name="materialCardViewStyle">@style/Widget.SportyBara.Card</item>
         <item name="bottomNavigationStyle">@style/Widget.SportyBara.BottomNavigation</item>
