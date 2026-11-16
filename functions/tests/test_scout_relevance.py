@@ -33,7 +33,6 @@ def test_diacritics_are_ignored_in_match():
 
 
 def test_team_name_must_be_whole_word():
-    # „Real” nu trebuie să se potrivească în „Realizare”
     assert not is_relevant(_article("Realizare fără precedent"), "Real", "Getafe", SINCE)
 
 
@@ -52,7 +51,6 @@ def test_article_without_date_is_relevant():
 
 
 def test_city_news_is_not_relevant():
-    # „Barcelona” orașul, nu echipa
     assert not is_relevant(_article("El alquiler medio sube en Barcelona"), "Barcelona", "Sevilla", SINCE)
 
 
@@ -61,7 +59,6 @@ def test_both_teams_mentioned_is_relevant_without_keywords():
 
 
 def test_terms_match_at_word_start_only():
-    # „golf” nu e „gol”, „medicina” nu e „médico”, „returned” nu e „return”
     assert not is_relevant(_article("Barcelona acoge un torneo de golf"), "Barcelona", "Sevilla", SINCE)
     assert not is_relevant(_article("Barcelona, capital de la medicina"), "Barcelona", "Sevilla", SINCE)
     assert not is_relevant(_article("Tourists returned to Barcelona"), "Barcelona", "Sevilla", SINCE)

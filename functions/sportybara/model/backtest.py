@@ -1,4 +1,3 @@
-"""Backtest walk-forward: la fiecare etapă (bloc de zile) modelele văd DOAR meciurile de dinainte."""
 import bisect
 import math
 from datetime import timedelta
@@ -8,9 +7,8 @@ from .combine import combine, fair_odds
 from .elo import EloModel
 from .poisson import PoissonModel
 
-# ponderi fixate a priori (nu optimizate pe datele de test)
-W_MODEL = {"poisson": 0.65, "elo": 0.35}                      # fără piață
-W_ALL = {"poisson": 0.35, "elo": 0.15, "market": 0.50}        # cu piața
+W_MODEL = {"poisson": 0.65, "elo": 0.35}
+W_ALL = {"poisson": 0.35, "elo": 0.15, "market": 0.50}
 PRODUCTS = ("poisson", "elo", "model", "all", "market")
 THRESHOLDS = (0.0, 0.05, 0.10, 0.20)
 
@@ -20,12 +18,6 @@ def outcome_of(m: dict) -> str:
 
 
 def walk_forward(matches, test_start, xi=None, block_days: int = 7, min_train: int = 150, elo_kwargs=None):
-    """Predicții pentru toate meciurile cu data >= test_start.
-
-    Pentru fiecare bloc (meciuri la < block_days de la primul), Poisson și Elo se
-    antrenează doar pe meciuri cu data STRICT mai mică decât începutul blocului.
-    Întoarce [{match, outcome, probs: {poisson, elo, model, all, market?}}].
-    """
     matches = sorted(matches, key=lambda m: m["date"])
     dates = [m["date"] for m in matches]
     elo = EloModel(**(elo_kwargs or {}))
@@ -35,7 +27,7 @@ def walk_forward(matches, test_start, xi=None, block_days: int = 7, min_train: i
     while i < len(matches):
         start = dates[i]
         end = bisect.bisect_left(dates, start + timedelta(days=block_days))
-        train_end = bisect.bisect_left(dates, start)  # doar meciuri < start
+        train_end = bisect.bisect_left(dates, start)
         for m in matches[elo_done:train_end]:
             elo.update(m["home"], m["away"], m["hg"], m["ag"])
         elo_done = train_end
@@ -61,7 +53,6 @@ def walk_forward(matches, test_start, xi=None, block_days: int = 7, min_train: i
 
 
 def metrics(records, product: str) -> dict:
-    """log loss, Brier (suma pătratelor pe cele 3 rezultate) și acuratețe; doar meciurile cu cote de piață."""
     rows = [r for r in records if "market" in r["probs"]]
     n = len(rows)
     ll = br = acc = 0.0
@@ -74,7 +65,6 @@ def metrics(records, product: str) -> dict:
 
 
 def value_bets(records, product: str = "model", thresholds=THRESHOLDS) -> list:
-    """Pariu de 1 unitate pe fiecare rezultat unde cota MAX din piață > cota noastră × (1 + prag)."""
     res = []
     for thr in thresholds:
         n = wins = 0
@@ -98,7 +88,6 @@ def value_bets(records, product: str = "model", thresholds=THRESHOLDS) -> list:
 
 
 def baseline_all_bets(records) -> dict:
-    """Referință: pariu pe toate cele 3 rezultate la cota MAX (ROI-ul „orb”)."""
     n = 0
     profit = 0.0
     for r in records:
@@ -112,7 +101,6 @@ def baseline_all_bets(records) -> dict:
 
 
 def run(matches, test_start, **kw) -> dict:
-    """Rulează walk-forward + toate metricile pentru o ligă."""
     records = walk_forward(matches, test_start, **kw)
     return {
         "records": records,

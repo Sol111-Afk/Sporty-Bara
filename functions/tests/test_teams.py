@@ -14,7 +14,6 @@ def test_slug_scoate_diacritice_si_punctuatie(name, expected):
 
 
 def test_slug_nu_scoate_prefixe_fc_cf_cfr():
-    # prefixele rămân: „CFR Cluj” nu trebuie confundat cu „Cluj”
     assert slug("FC Barcelona") == "fc-barcelona"
     assert slug("CFR Cluj") == "cfr-cluj"
 

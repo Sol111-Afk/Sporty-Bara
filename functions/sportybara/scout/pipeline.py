@@ -1,5 +1,3 @@
-"""Lanțul Scout: căutare → RSS → relevanță → deduplicare → factori → pending."""
-
 import logging
 from datetime import datetime
 
@@ -16,18 +14,11 @@ from .rss import feeds_for, fetch, google_news_url, parse_feed
 log = logging.getLogger(__name__)
 
 
-MAX_ARTICLES = 40  # limită per meci: fiecare articol costă un apel la extractor
+MAX_ARTICLES = 40
 
 
 def collect(session, match: dict, since: datetime, delay: float = 1.0,
             max_articles: int = MAX_ARTICLES, feed_cache: dict | None = None) -> list[Article]:
-    """Articolele relevante pentru meci, fără dubluri, cele mai recente primele (cel mult max_articles).
-
-    match: {"id", "home", "away", "league"}. `since` trebuie să fie aware (UTC).
-    feed_cache: dict url → conținut, comun pentru toate meciurile dintr-o rulare,
-    ca fluxurile fixe (Marca, GSP...) să se descarce o singură dată.
-    Erorile de rețea la un flux sunt doar logate, nu opresc restul.
-    """
     home, away = match["home"], match["away"]
     articles: list[Article] = []
 
@@ -51,14 +42,12 @@ def collect(session, match: dict, since: datetime, delay: float = 1.0,
         articles += parse_feed(feed_cache[url], name, "")
 
     relevant = dedup([a for a in articles if is_relevant(a, home, away, since)])
-    # cele mai noi primele; articolele fără dată la final
     relevant.sort(key=lambda a: (a.published is not None, a.published or since), reverse=True)
     return relevant[:max_articles]
 
 
 def run(session, match: dict, extractor: Extractor, since: datetime, delay: float = 1.0,
         feed_cache: dict | None = None) -> list[dict]:
-    """collect + extragerea factorilor din fiecare articol → documente pending."""
     home, away = match["home"], match["away"]
     factors = []
     for article in collect(session, match, since, delay=delay, feed_cache=feed_cache):
