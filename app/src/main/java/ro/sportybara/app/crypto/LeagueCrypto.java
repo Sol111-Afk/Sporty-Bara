@@ -115,7 +115,10 @@ public final class LeagueCrypto {
         if (decoded.compareTo(n.shiftRight(1)) > 0) {
             decoded = decoded.subtract(n);
         }
-        return decoded.longValueExact();
+        if (decoded.bitLength() > 63) {
+            throw new ArithmeticException("valoare prea mare pentru long");
+        }
+        return decoded.longValue();
     }
 
     public static BigInteger ciphertextFromDecimal(String decimal) {

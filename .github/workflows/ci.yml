@@ -20,7 +20,7 @@ jobs:
           packages: "platform-tools platforms;android-36.1 build-tools;36.0.0"
       - uses: gradle/actions/setup-gradle@v4
       - name: Build + teste unitare
-        run: ./gradlew assembleDebug test --console=plain
+        run: ./gradlew assembleDebug test lintDebug --console=plain
 
   functions:
     name: Functions Python (teste)
